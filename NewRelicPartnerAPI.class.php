@@ -220,6 +220,24 @@ class NewRelicPartnerAPI
 
 
   /**
+   * Return the value of a set cURL option
+   *
+   * @param $opt
+   *
+   * @return mixed
+   */
+  public function getCurlOpt($opt)
+  {
+    if (array_key_exists($opt, $this->curl_opts))
+    {
+      return $this->curl_opts[$opt];
+    }
+
+    return null;
+  }
+
+
+  /**
    * Allow setting of a cURL option
    *
    * @param int   $opt
@@ -267,5 +285,16 @@ class NewRelicPartnerAPI
     $this->curl_opts = array_merge($this->curl_opts, $options);
 
     curl_setopt_array($this->curl, $options);
+  }
+
+
+  /**
+   * Get the URL of the API call
+   *
+   * @return string
+   */
+  public function getUrl()
+  {
+    return $this->getCurlOpt(CURLOPT_URL);
   }
 }
