@@ -5,6 +5,8 @@
  * Class NewRelicApiException
  *
  * General New Relic API exception class
+ *
+ * @author Robin Corps <robin@wirehive.net>
  */
 class NewRelicApiException extends Exception
 {

@@ -7,6 +7,9 @@ require_once('Exceptions.php');
  * Class NewRelicPartnerAPI
  *
  * Interface to the NewRelic Partner API v2
+ *
+ * @author Robin Corps <robin@wirehive.net>
+ * @version 0.1
  */
 class NewRelicPartnerAPI
 {
@@ -17,7 +20,7 @@ class NewRelicPartnerAPI
   const LIVE_URL    = 'https://rpm.newrelic.com/api/v2/partners/';
 
   private $curl = null;
-  private $curl_opts;
+  private $curl_opts = array();
   private $ipv4_fallback = true; // if server is using IPv6 but not setup correctly fall back to IPv4
   private $mode;
   private $partner_id;
@@ -31,15 +34,21 @@ class NewRelicPartnerAPI
    *
    * @throws NewRelicApiException
    */
-  public function __construct($partner_id, $api_key, $mode = self::LIVE)
+  public function __construct($partner_id, $api_key, $mode = null)
   {
-    if (!is_string($partner_id) || !is_string($api_key))
+    if (!is_int($partner_id) || !is_string($api_key))
     {
       throw new NewRelicApiException('You must specify a Partner ID and API key.');
     }
 
     $this->setPartnerId($partner_id);
     $this->setApiKey($api_key);
+
+    if ($mode === null)
+    {
+      $mode = self::LIVE;
+    }
+
     $this->setMode($mode);
 
     $this->initCurl();
@@ -158,7 +167,7 @@ class NewRelicPartnerAPI
 
     if ($params !== null)
     {
-      $this->setCurlOpt(CURLOPT_POSTFIELDS, $params);
+      $this->setCurlOpt(CURLOPT_POSTFIELDS, json_encode($params));
     }
 
     $result = curl_exec($this->curl);
