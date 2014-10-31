@@ -35,6 +35,8 @@ class NewRelicPartnerAPI
 
 
   /**
+   * Construct a new NewRelic Partner API interface
+   *
    * @param string $partner_id
    * @param string $api_key
    * @param int    $mode
