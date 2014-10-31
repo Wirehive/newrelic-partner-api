@@ -16,11 +16,6 @@ require_once('Objects/Subscription.php');
  */
 class NewRelicPartnerAPI
 {
-  const GET = 1;
-  const POST = 2;
-  const PUT = 3;
-  const DELETE = 4;
-
   const STAGING = 1;
   const LIVE    = 2;
 
@@ -179,7 +174,7 @@ class NewRelicPartnerAPI
    * @param array  $params
    * @param int    $type
    */
-  public function call($url, $params = null, $type = self::GET)
+  public function call($url, $params = null, $type = HTTP_METH_GET)
   {
     $this->setCurlOpt(CURLOPT_URL, $this->getEndpoint() . $url);
 
@@ -191,19 +186,19 @@ class NewRelicPartnerAPI
     switch ($type)
     {
       default:
-      case self::GET:
+      case HTTP_METH_GET:
         break;
 
-      case self::POST:
+      case HTTP_METH_POST:
         $this->setCurlOpt(CURLOPT_POST, true);
         break;
 
-      case self::PUT:
+      case HTTP_METH_PUT:
         $this->setCurlOpt(CURLOPT_PUT, true);
         $this->setCurlOpt(CURLOPT_CUSTOMREQUEST, 'PUT');
         break;
 
-      case self::DELETE:
+      case HTTP_METH_DELETE:
         $this->setCurlOpt(CURLOPT_CUSTOMREQUEST, 'DELETE');
         break;
     }
