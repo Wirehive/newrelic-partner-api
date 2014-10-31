@@ -1,6 +1,9 @@
 <?php
 
 require_once('Exceptions.php');
+require_once('Objects/Account.php');
+require_once('Objects/User.php');
+require_once('Objects/Subscription.php');
 
 
 /**
@@ -13,11 +16,20 @@ require_once('Exceptions.php');
  */
 class NewRelicPartnerAPI
 {
+  const GET = 1;
+  const POST = 2;
+  const PUT = 3;
+  const DELETE = 4;
+
   const STAGING = 1;
   const LIVE    = 2;
 
   const STAGING_URL = 'https://staging.newrelic.com/api/v2/partners/';
   const LIVE_URL    = 'https://rpm.newrelic.com/api/v2/partners/';
+
+  public $account;
+  public $user;
+  public $subscription;
 
   private $curl = null;
   private $curl_opts = array();
@@ -52,6 +64,10 @@ class NewRelicPartnerAPI
     $this->setMode($mode);
 
     $this->initCurl();
+
+    $this->account = new NewRelicPartnerAPIAccount($this);
+    $this->user = new NewRelicPartnerAPIUser($this);
+    $this->subscription = new NewRelicPartnerAPISubscription($this);
   }
 
 
@@ -64,7 +80,8 @@ class NewRelicPartnerAPI
 
     $this->setCurlOpts(array(
       CURLOPT_HTTPHEADER     => array(
-        'x-api-key:' . $this->getApiKey()
+        'x-api-key: ' . $this->getApiKey(),
+        'Content-Type: application/json'
       ),
       CURLOPT_CONNECTTIMEOUT => 10,
       CURLOPT_RETURNTRANSFER => true,
@@ -160,14 +177,35 @@ class NewRelicPartnerAPI
    *
    * @param string $url
    * @param array  $params
+   * @param int    $type
    */
-  protected function call($url, $params = null)
+  public function call($url, $params = null, $type = self::GET)
   {
-    $this->setCurlOpt(CURLOPT_URL, $url);
+    $this->setCurlOpt(CURLOPT_URL, $this->getEndpoint() . $url);
 
     if ($params !== null)
     {
       $this->setCurlOpt(CURLOPT_POSTFIELDS, json_encode($params));
+    }
+
+    switch ($type)
+    {
+      default:
+      case self::GET:
+        break;
+
+      case self::POST:
+        $this->setCurlOpt(CURLOPT_POST, true);
+        break;
+
+      case self::PUT:
+        $this->setCurlOpt(CURLOPT_PUT, true);
+        $this->setCurlOpt(CURLOPT_CUSTOMREQUEST, 'PUT');
+        break;
+
+      case self::DELETE:
+        $this->setCurlOpt(CURLOPT_CUSTOMREQUEST, 'DELETE');
+        break;
     }
 
     $result = curl_exec($this->curl);
@@ -214,6 +252,18 @@ class NewRelicPartnerAPI
     }
 
     curl_close($this->curl);
+
+    $result = json_decode($result, true);
+
+    if ($result === null)
+    {
+      throw new NewRelicApiException('Error decoding result as JSON');
+    }
+
+    if (array_key_exists('error', $result))
+    {
+      throw new NewRelicApiException('NewRelic returned the error: ' . $result['error']);
+    }
 
     return $result;
   }
