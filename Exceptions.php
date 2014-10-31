@@ -10,6 +10,8 @@
  */
 class NewRelicApiException extends Exception
 {
+  const USER_EXISTS = 100;
+
   protected $data;
 
 

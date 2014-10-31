@@ -22,6 +22,11 @@ class NewRelicPartnerAPI
   const STAGING_URL = 'https://staging.newrelic.com/api/v2/partners/';
   const LIVE_URL    = 'https://rpm.newrelic.com/api/v2/partners/';
 
+  const GET = 1;
+  const POST = 2;
+  const PUT = 3;
+  const DELETE = 4;
+
   public $account;
   public $user;
   public $subscription;
@@ -176,43 +181,41 @@ class NewRelicPartnerAPI
    * @param array  $params
    * @param int    $type
    */
-  public function call($url, $params = null, $type = HTTP_METH_GET)
+  public function call($url, $params = null, $type = null)
   {
     $this->setCurlOpt(CURLOPT_URL, $this->getEndpoint() . $url);
 
     if ($params !== null)
     {
-      $this->setCurlOpt(CURLOPT_POSTFIELDS, json_encode($params));
+      $this->setCurlOpt(CURLOPT_POSTFIELDS, json_encode($params, JSON_NUMERIC_CHECK));
     }
 
     switch ($type)
     {
-      default:
-      case HTTP_METH_GET:
-        break;
-
-      case HTTP_METH_POST:
+      case self::POST:
         $this->setCurlOpt(CURLOPT_POST, true);
         break;
 
-      case HTTP_METH_PUT:
+      case self::PUT:
         $this->setCurlOpt(CURLOPT_PUT, true);
         $this->setCurlOpt(CURLOPT_CUSTOMREQUEST, 'PUT');
         break;
 
-      case HTTP_METH_DELETE:
+      case self::DELETE:
         $this->setCurlOpt(CURLOPT_CUSTOMREQUEST, 'DELETE');
         break;
     }
 
-    $result = curl_exec($this->curl);
+    $response = curl_exec($this->curl);
+
+    $status = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
 
     if (curl_errno($this->curl) == 60)
     {
       throw new NewRelicApiException('Invalid or no certificate authority found');
     }
 
-    if ($result === false && !$this->curlOptSet(CURLOPT_IPRESOLVE))
+    if ($response === false && !$this->curlOptSet(CURLOPT_IPRESOLVE))
     {
       $matches = array();
       $regex   = '/Failed to connect to ([^:].*): Network is unreachable/';
@@ -232,12 +235,12 @@ class NewRelicPartnerAPI
 
           $this->setCurlOpt(CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 
-          $result = curl_exec($this->curl);
+          $response = curl_exec($this->curl);
         }
       }
     }
 
-    if ($result === false)
+    if ($response === false)
     {
       curl_close($this->curl);
 
@@ -250,16 +253,34 @@ class NewRelicPartnerAPI
 
     curl_close($this->curl);
 
-    $result = json_decode($result, true);
+    $result = json_decode($response, true);
 
     if ($result === null)
     {
-      throw new NewRelicApiException('Error decoding result as JSON');
+      if ($status == 500)
+      {
+        throw new NewRelicApiException('NewRelic threw a 500 error...');
+      }
+
+      throw new NewRelicApiException('Error decoding result as JSON (' . $status . '): ' . $response);
     }
 
     if (array_key_exists('error', $result))
     {
-      throw new NewRelicApiException('NewRelic returned the error: ' . $result['error']);
+      $code = 0;
+      $error = $result['error'];
+
+      if (is_array($result['error']))
+      {
+        if (array_key_exists('accountview', $result['error']) && strpos($result['error']['accountview'][0], 'exists') !== false)
+        {
+          $code = NewRelicApiException::USER_EXISTS;
+        }
+
+        $error = var_export($result['error'], true);
+      }
+
+      throw new NewRelicApiException('NewRelic returned the error: ' . $error, $code);
     }
 
     return $result;
@@ -343,5 +364,14 @@ class NewRelicPartnerAPI
   public function getUrl()
   {
     return $this->getCurlOpt(CURLOPT_URL);
+  }
+
+
+  /**
+   * Reset the cURL settings so the same API instance can be reused
+   */
+  public function reset()
+  {
+    $this->initCurl();
   }
 }

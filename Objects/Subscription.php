@@ -83,6 +83,6 @@ class NewRelicPartnerAPISubscription
    */
   public function create($account_id, $params)
   {
-    return $this->api->call('accounts/' . $account_id . '/subscriptions', $params, HTTP_METH_POST);
+    return $this->api->call('accounts/' . $account_id . '/subscriptions', $params, NewRelicPartnerAPI::POST);
   }
 } 

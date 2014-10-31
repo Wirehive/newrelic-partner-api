@@ -103,7 +103,7 @@ class NewRelicPartnerAPIAccount
    */
   public function update($account_id, $params)
   {
-    return $this->api->call('accounts/' . $account_id, $params, HTTP_METH_PUT);
+    return $this->api->call('accounts/' . $account_id, $params, NewRelicPartnerAPI::PUT);
   }
 
 
@@ -118,7 +118,7 @@ class NewRelicPartnerAPIAccount
    */
   public function create($params)
   {
-    return $this->api->call('accounts', $params, HTTP_METH_POST);
+    return $this->api->call('accounts', $params, NewRelicPartnerAPI::POST);
   }
 
 
@@ -133,6 +133,6 @@ class NewRelicPartnerAPIAccount
    */
   public function cancel($account_id)
   {
-    return $this->api->call('accounts/' . $account_id, null, HTTP_METH_DELETE);
+    return $this->api->call('accounts/' . $account_id, null, NewRelicPartnerAPI::DELETE);
   }
 } 
