@@ -28,6 +28,12 @@ class NewRelicPartnerAPISubscription
   /** @var NewRelicPartnerAPI $api */
   private $api;
 
+
+  /**
+   * Construct a new Subscription API interface
+   *
+   * @param NewRelicPartnerAPI $api
+   */
   public function __construct(NewRelicPartnerAPI $api)
   {
     $this->api = $api;

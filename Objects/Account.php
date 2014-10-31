@@ -53,7 +53,7 @@ class NewRelicPartnerAPIAccount
 
 
   /**
-   * Construct a new Account object
+   * Construct a new Account API interface
    *
    * @param NewRelicPartnerAPI $api
    */
