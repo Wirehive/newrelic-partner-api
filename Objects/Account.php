@@ -5,8 +5,46 @@
  * Class NewRelicPartnerAPIAccount
  *
  * @author Robin Corps <robin@wirehive.net>
- *
  * @link   https://docs.newrelic.com/docs/accounts-partnerships/partnerships/partner-api/partner-api-account-object#account-calls
+ *
+ * The following is an example of a JSON call using the API.
+ * <code>
+ * {
+ *   "account": [
+ *     {
+ *       "name": "Data Nerds",
+ *       "phone_number": "503-555-0123",
+ *       "allow_api_access": true,
+ *       "testing": false,
+ *       "users": [
+ *         {
+ *           "email": "someone@company.com",
+ *           "password": "testing123",
+ *           "first_name": "John",
+ *           "last_name": "Smith",
+ *           "owner": true,
+ *           "role": "admin"
+ *         },
+ *         {
+ *           "email": "someonelse@company.com",
+ *           "password": "testing345",
+ *           "first_name": "Fred",
+ *           "last_name": "Bloggs",
+ *           "owner": false,
+ *           "role": "user"
+ *         }
+ *       ],
+ *       "subscriptions": [
+ *         {
+ *           "product_id": 4,
+ *           "quantity": 2,
+ *          "promo_code": null
+ *         }
+ *       ]
+ *     }
+ *   ]
+ * }
+ * </code>
  */
 class NewRelicPartnerAPIAccount
 {
