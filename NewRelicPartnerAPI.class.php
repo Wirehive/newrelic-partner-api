@@ -350,7 +350,7 @@ class NewRelicPartnerAPI
    */
   public function setCurlOpts($options)
   {
-    $this->curl_opts = array_merge($this->curl_opts, $options);
+    $this->curl_opts = $options + $this->curl_opts;
 
     curl_setopt_array($this->curl, $options);
   }
