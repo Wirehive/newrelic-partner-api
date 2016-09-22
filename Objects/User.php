@@ -4,7 +4,7 @@
 /**
  * Class NewRelicPartnerAPIUser
  *
- * @author Robin Corps <robin@wirehive.net>
+ * @author Robin Corps <robin.corps@wirehive.com>
  * @link https://docs.newrelic.com/docs/accounts-partnerships/partnerships/partner-api/partner-api-user-object
  *
  * The following is an example of a defined user object.

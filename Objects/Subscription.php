@@ -4,7 +4,7 @@
 /**
  * Class NewRelicPartnerAPISubscription
  *
- * @author Robin Corps <robin@wirehive.net>
+ * @author Robin Corps <robin.corps@wirehive.com>
  * @link https://docs.newrelic.com/docs/accounts-partnerships/partnerships/partner-api/partner-api-subscription-object
  *
  * The following is an example of a subscription call to create a subscription.

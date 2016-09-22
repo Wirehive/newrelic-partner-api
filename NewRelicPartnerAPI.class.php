@@ -11,7 +11,7 @@ require_once('Objects/Subscription.php');
  *
  * Interface to the NewRelic Partner API v2
  *
- * @author Robin Corps <robin@wirehive.net>
+ * @author Robin Corps <robin.corps@wirehive.com>
  * @version 0.1
  */
 class NewRelicPartnerAPI

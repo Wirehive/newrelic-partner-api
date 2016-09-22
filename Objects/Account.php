@@ -4,7 +4,7 @@
 /**
  * Class NewRelicPartnerAPIAccount
  *
- * @author Robin Corps <robin@wirehive.net>
+ * @author Robin Corps <robin.corps@wirehive.com>
  * @link   https://docs.newrelic.com/docs/accounts-partnerships/partnerships/partner-api/partner-api-account-object#account-calls
  *
  * The following is an example of a JSON call using the API.
